@@ -108,7 +108,7 @@ function Story() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background pb-20">
       <MusicButton />
       <ProgressRail has={has} />
 
