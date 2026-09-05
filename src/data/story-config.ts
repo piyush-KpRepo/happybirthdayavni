@@ -29,14 +29,14 @@ export const config = {
    * ----------------------------------------------------------------- */
   gates: {
     entry: {
-      question: "What's the first thing that started all of this?",
-      hint: "Think back to the time when Piyush first developed a certain little problem…",
+      question: "Before you became my wife, what was the first thing you became?",
+      hint: "Think back to 5th class… A certain boy had developed a tiny little problem. 👀",
       accept: ["crush"],
-      wrong: ["❌ Nope.", "Nice try, Avni.", "Hint: It wasn't your diet."],
+      wrong: ["❌ Nope.", "Nice try, Avni.", "Hint: It wasn't your diet. 😂"],
     },
     blocked: {
-      question: "What did Avni turn Piyush into in 11th class?",
-      hint: "One tap. One button. One legendary decision.",
+      question: "What did Avni do when Piyush said…",
+      hint: "I LIKE YOU.",
       accept: ["blocked", "block"],
       wrong: ["❌ Not quite.", "You did it with one tap, remember?"],
     },
@@ -51,7 +51,7 @@ export const config = {
       question: "This is the place where you experienced something for the first time with me.",
       hint: "It was cold. It was white. You couldn't stop smiling.",
       accept: ["austria"],
-      wrong: ["❌ Not it.", "It was cold, and you were glowing."],
+      wrong: ["❌ That's not it.", "Think snow. ❄️"],
     },
     final: {
       question: "Where did I get to watch you experience your first snowfall?",
@@ -68,13 +68,15 @@ export const config = {
     austria: { src: null, label: "ADD AUSTRIA PHOTO", alt: "First snowfall in Austria" } as Photo,
     flight: { src: null, label: "ADD FLIGHT PHOTO", alt: "First international flight" } as Photo,
     wedding: { src: null, label: "ADD WEDDING PHOTO", alt: "Our wedding" } as Photo,
-    final: { src: null, label: "ADD YOUR FAVORITE PHOTO HERE", alt: "Us" } as Photo,
+    marriage2: { src: null, label: "ADD ANOTHER WEDDING PHOTO", alt: "Our marriage" } as Photo,
+    final: { src: null, label: "ADD OUR FAVORITE PHOTO HERE", alt: "Us" } as Photo,
     /** optional funny clip — set to an mp4 in /public/photos or leave null */
     mimicryClip: null as string | null,
   },
 
-  marriedFor: "6 MONTHS MARRIED ❤️",
-  togetherFor: "2.5 YEARS TOGETHER ❤️",
+  marriedFor: "6 MONTHS OF BEING HUSBAND & WIFE ❤️",
+  marriedForShort: "6 months married.",
+  togetherFor: "2.5 years together",
 
   /* --- 💌 THE LETTER ------------------------------------------------ */
   letter: `Okay… jokes apart.
@@ -128,18 +130,28 @@ I love you.
       after: "Correct. Scientists have been unable to explain this phenomenon.",
     },
     {
-      q: "Avni starts a diet at…",
+      q: "What happens after the maid has already cleaned the house?",
       sub: "",
-      options: ["8 AM", "10 AM", "Monday", "Every single morning"],
+      options: [
+        "Avni relaxes",
+        "Avni checks everything",
+        "Avni finds something to clean again",
+        "ULTRA CLEANING MODE ACTIVATES 🧹",
+      ],
       correct: 3,
-      after: "Excellent. And how long does it last?",
+      after: "CORRECT. The maid has left. The cleaning is complete. Avni disagrees.",
     },
     {
-      q: "Diet plan at 8 AM… fast food order at 7 PM…",
-      sub: "What happened?",
-      options: ["Failure", "Cheat day", "Strategic nutrition", "Avni logic™"],
-      correct: 3,
-      after: "RESULT: 100% Avni. 0% surprised.",
+      q: "Avni makes a healthy diet plan in the morning.",
+      sub: "What happens by evening?",
+      options: [
+        "She follows it perfectly",
+        "She forgets",
+        "She orders fast food 🍕",
+        "She becomes a fitness influencer",
+      ],
+      correct: 2,
+      after: "Correct. Morning Avni: DIET. Evening Avni: PIZZA? Consistency is important. 😂",
     },
   ],
 } as const;

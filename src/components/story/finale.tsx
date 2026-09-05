@@ -66,11 +66,15 @@ export function LoveLetter({ done, onOpen }: { done: boolean; onOpen: () => void
 /* ================================================================== */
 const checklist = [
   "Found the first clue",
+  "Caught the red circle",
   "Survived the legendary block",
+  "Avoided the blocks",
   "Became best friends",
   "Survived the Avni Test",
+  "Activated Ultra Cleaning Mode",
   "Found the Red Circle",
   "Unlocked the love letter",
+  "Solved the Red Circle Maze",
 ];
 
 export function FinalLevel({ done, onReveal }: { done: boolean; onReveal: () => void }) {
@@ -106,7 +110,7 @@ export function FinalLevel({ done, onReveal }: { done: boolean; onReveal: () => 
                 onReveal();
               }}
               cta="Reveal 🔓"
-              successTitle="FINAL LEVEL COMPLETE ❤️"
+              successTitle="FINAL SECRET UNLOCKED ❤️"
             />
           </Reveal>
         </>

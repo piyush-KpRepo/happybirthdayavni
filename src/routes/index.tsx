@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { config } from "@/data/story-config";
 import { useStoryProgress, type Step } from "@/hooks/useStoryProgress";
-import { DestinyButton, Passcode, RedCircle, Reveal } from "@/components/story/primitives";
+import { DestinyButton, RedCircle, Reveal } from "@/components/story/primitives";
 import {
   AvniReport,
   AvniTest,
@@ -11,11 +10,12 @@ import {
   ChapterOne,
   ChapterThree,
   ChapterTwo,
-  CirclePuzzle,
   EntryGate,
   TopSecret,
+  WeddingChapter,
 } from "@/components/story/parts";
 import { FinalAnimation, FinalLevel, LoveLetter, MusicButton } from "@/components/story/finale";
+import { AvoidBlockGame, CatchCircleGame, CleaningGame, MazeGame } from "@/components/story/games";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,7 +43,7 @@ const rail = [
   { key: "ch1", label: "01" },
   { key: "ch2", label: "02" },
   { key: "ch3", label: "03" },
-  { key: "ch4", label: "04" },
+  { key: "wedding", label: "04" },
   { key: "ch5", label: "05" },
   { key: "final", label: "❤️" },
 ] as const;
@@ -118,69 +118,82 @@ function Story() {
         <EntryGate onSolved={() => unlock("entered")} />
       ) : (
         <>
+          {/* Chapter 1 — 5th class / crush */}
           <ChapterOne done={has("ch1")} onClue={() => unlock("ch1")} />
 
-          {has("ch1") ? (
+          {/* Mini Game 1 — Catch the Red Circle */}
+          {has("ch1") && (
+            <CatchCircleGame done={has("game1")} onSolve={() => unlock("game1")} />
+          )}
+
+          {/* Chapter 2 — The Legendary Block */}
+          {has("game1") ? (
             <ChapterTwo done={has("ch2")} onUnlock={() => unlock("ch2")} />
           ) : (
-            <LockedTeaser text="Chapter 02 locked — find the clue above" />
+            has("ch1") && <LockedTeaser text="Chapter 02 locked — catch the red circle first" />
           )}
 
-          {/* clue chain: the legendary block is also the key to chapter 03 */}
-          {has("ch2") && !has("ch3") && (
-            <section className="px-5 py-12 sm:px-8">
-              <div className="mx-auto w-full max-w-md">
-                <Passcode
-                  gate={config.gates.blocked}
-                  onSolved={() => unlock("ch3")}
-                  successTitle="ACCESS GRANTED."
-                  successNote="Ruthless. Efficient. Iconic."
-                />
-              </div>
-            </section>
+          {/* Mini Game 2 — Avoid the Block */}
+          {has("ch2") && (
+            <AvoidBlockGame done={has("game2")} onSolve={() => unlock("game2")} />
           )}
 
+          {/* Best Friends chapter */}
+          {has("game2") ? (
+            <ChapterThree done={has("ch3")} onUnlock={() => unlock("ch3")} />
+          ) : (
+            has("ch2") && <LockedTeaser text="Chapter 03 locked — survive the block first" />
+          )}
+
+          {/* Second Confession / YES */}
           {has("ch3") && (
-            <ChapterThree done={has("ch4")} onUnlock={() => unlock("ch4")} />
+            <ChapterFour done={has("ch4")} onUnlock={() => unlock("ch4")} />
           )}
 
-          {has("ch4") && <ChapterFour done={has("quiz")} onUnlock={() => unlock("quiz")} />}
+          {/* Avni Quiz */}
+          {has("ch4") && <AvniTest done={has("quiz")} onPass={() => unlock("quiz")} />}
 
-          {has("quiz") && <AvniTest done={has("ch5")} onPass={() => unlock("ch5")} />}
-
-          {has("ch5") && <ChapterFive done={has("puzzle")} onUnlock={() => unlock("puzzle")} />}
-
-          {has("puzzle") && <CirclePuzzle done={has("inside")} onSolve={() => unlock("inside")} />}
-
-          {has("inside") && <AvniReport />}
-
-          {/* clue chain: your private inside joke guards the letter section */}
-          {has("inside") && !has("letter") && (
-            <section className="bg-ink px-5 py-14 sm:px-8">
-              <div className="mx-auto w-full max-w-md">
-                <p className="mb-5 text-center text-[0.65rem] uppercase tracking-[0.4em] text-destiny">
-                  Final security check
-                </p>
-                <Passcode
-                  gate={config.gates.inside}
-                  onSolved={() => unlock("letter")}
-                  cta="Verify 🔐"
-                  successTitle="IDENTITY CONFIRMED."
-                  successNote="Only one person on earth could answer that."
-                />
-              </div>
-            </section>
+          {/* Wedding chapter */}
+          {has("quiz") ? (
+            <WeddingChapter done={has("wedding")} onUnlock={() => unlock("wedding")} />
+          ) : (
+            has("ch4") && <LockedTeaser text="Wedding chapter locked — pass the Avni Test first" />
           )}
 
-          {has("letter") && (
-            <>
-              <LoveLetter done={has("opened")} onOpen={() => unlock("opened")} />
-              {has("opened") && (
-                <FinalLevel done={has("final")} onReveal={() => unlock("final")} />
-              )}
-              {has("final") && <FinalAnimation />}
-            </>
+          {/* Adventures after marriage */}
+          {has("wedding") ? (
+            <ChapterFive done={has("ch5")} onUnlock={() => unlock("ch5")} />
+          ) : (
+            has("quiz") && <LockedTeaser text="Chapter 05 locked — unlock the wedding first" />
           )}
+
+          {/* Official Avni Report */}
+          {has("ch5") && (
+            <AvniReport done={has("report")} onUnlock={() => unlock("report")} />
+          )}
+
+          {/* Mini Game 3 — Cleaning Challenge */}
+          {has("report") && (
+            <CleaningGame done={has("game3")} onSolve={() => unlock("game3")} />
+          )}
+
+          {/* Locked Love Letter */}
+          {has("game3") && (
+            <LoveLetter done={has("opened")} onOpen={() => unlock("opened")} />
+          )}
+
+          {/* Final Game — Red Circle Maze */}
+          {has("opened") && (
+            <MazeGame done={has("game4")} onSolve={() => unlock("game4")} />
+          )}
+
+          {/* Final Photo Reveal */}
+          {has("game4") && (
+            <FinalLevel done={has("final")} onReveal={() => unlock("final")} />
+          )}
+
+          {/* Final Animation */}
+          {has("final") && <FinalAnimation />}
 
           <footer className="space-y-4 bg-ink px-5 py-12 text-center">
             <Reveal>

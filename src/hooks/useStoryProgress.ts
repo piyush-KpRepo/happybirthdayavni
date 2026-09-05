@@ -3,21 +3,24 @@ import { useCallback, useEffect, useState } from "react";
 export const STEPS = [
   "entered", // passed the top-secret gate
   "ch1", // chapter 1 read, clue circle found
-  "ch2", // best friends unlocked
-  "ch3", // there's more
+  "game1", // catch the red circle mini-game
+  "ch2", // blocked quiz + story
+  "game2", // avoid the block mini-game
+  "ch3", // best friends — there's more
   "ch4", // she said yes
   "quiz", // avni test passed
-  "ch5", // memories seen
-  "puzzle", // red circle found
-  "inside", // private inside-joke passcode
-  "letter", // inside-joke verified, letter section available
+  "wedding", // wedding chapter seen
+  "ch5", // adventures seen
+  "report", // avni report seen
+  "game3", // cleaning challenge mini-game
   "opened", // love letter read
+  "game4", // red circle maze mini-game
   "final", // final photo revealed
 ] as const;
 
 export type Step = (typeof STEPS)[number];
 
-const KEY = "avni-red-circle-progress-v1";
+const KEY = "avni-red-circle-progress-v2";
 
 export function useStoryProgress() {
   const [done, setDone] = useState<Step[]>([]);
@@ -42,21 +45,18 @@ export function useStoryProgress() {
     }
   }, []);
 
-  const unlock = useCallback(
-    (step: Step) => {
-      setDone((prev) => {
-        if (prev.includes(step)) return prev;
-        const next = [...prev, step];
-        try {
-          localStorage.setItem(KEY, JSON.stringify(next));
-        } catch {
-          /* ignore */
-        }
-        return next;
-      });
-    },
-    [],
-  );
+  const unlock = useCallback((step: Step) => {
+    setDone((prev) => {
+      if (prev.includes(step)) return prev;
+      const next = [...prev, step];
+      try {
+        localStorage.setItem(KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
 
   const has = useCallback((step: Step) => done.includes(step), [done]);
 

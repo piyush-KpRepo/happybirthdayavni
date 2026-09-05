@@ -41,11 +41,11 @@ export function TopSecret({ onEnter }: { onEnter: () => void }) {
       </div>
       <div className={`mt-6 space-y-1 ${show(4)}`}>
         <p className="text-[0.65rem] uppercase tracking-[0.35em] text-destiny">Known aliases</p>
-        <p className="text-sm text-cream/80">Cute • Crazy • Professional Comedian • Diet Expert</p>
+        <p className="text-sm text-cream/80">Cute • Crazy • Professional Comedian • Ultra Cleaner</p>
       </div>
       <div className={`mt-6 space-y-1 ${show(5)}`}>
         <p className="text-[0.65rem] uppercase tracking-[0.35em] text-destiny">Classification</p>
-        <p className="font-serif text-2xl text-cream">WIFE</p>
+        <p className="font-serif text-2xl text-cream">WIFE ❤️</p>
       </div>
       <div className={`mt-10 ${show(6)}`}>
         <p className="mb-5 text-xs uppercase tracking-[0.3em] text-blush/70">
@@ -74,6 +74,7 @@ export function EntryGate({ onSolved }: { onSolved: () => void }) {
           <Passcode
             gate={config.gates.entry}
             onSolved={onSolved}
+            successTitle="ACCESS GRANTED 🔓"
             successNote="Apparently, you really do remember your own love story."
           />
         </div>
@@ -100,7 +101,6 @@ export function ChapterOne({ done, onClue }: { done: boolean; onClue: () => void
         <PhotoFrame photo={config.photos.school} />
       </Reveal>
       <Line delay={100}>And that was the beginning.</Line>
-      <Line delay={150}>But obviously… our story was nowhere near normal.</Line>
 
       <Reveal>
         <div className="flex flex-col items-center gap-4 pt-6 text-center">
@@ -125,10 +125,11 @@ export function ChapterOne({ done, onClue }: { done: boolean; onClue: () => void
 }
 
 /* ================================================================== */
-/* CHAPTER 2 — THE LEGENDARY BLOCK                                     */
+/* CHAPTER 2 — THE LEGENDARY BLOCK (starts with a quiz)                */
 /* ================================================================== */
 export function ChapterTwo({ done, onUnlock }: { done: boolean; onUnlock: () => void }) {
-  const [stage, setStage] = useState(done ? 4 : 0);
+  const [stage, setStage] = useState(done ? 5 : 0); // 0=quiz, 1=answered, 2=dialogue, 3=blocked, 4=twist, 5=done
+  const [wrongAnswer, setWrongAnswer] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(done);
 
@@ -146,63 +147,110 @@ export function ChapterTwo({ done, onUnlock }: { done: boolean; onUnlock: () => 
     return () => io.disconnect();
   }, [started]);
 
+  // Dialogue animation after quiz answered
   useEffect(() => {
-    if (!started || stage >= 4) return;
+    if (stage < 1 || stage >= 5) return;
     const timers = [600, 1800, 3200, 4200].map((ms, i) =>
-      window.setTimeout(() => setStage((s) => Math.max(s, i + 1)), ms),
+      window.setTimeout(() => setStage((s) => Math.max(s, i + 2)), ms),
     );
     return () => timers.forEach(window.clearTimeout);
-  }, [started, stage]);
+  }, [stage]);
+
+  const quizOptions = [
+    "Said yes ❤️",
+    "Ran away 🏃‍♀️",
+    "Said let's just be friends",
+    "BLOCKED 🚫",
+  ];
+
+  const answerQuiz = (i: number) => {
+    if (i === 3) {
+      setStage(1);
+    } else {
+      setWrongAnswer(i);
+      window.setTimeout(() => setWrongAnswer(null), 600);
+    }
+  };
 
   return (
     <Chapter
       id="ch2"
-      eyebrow="Chapter 02 — The First Confession"
-      title="The Legendary Block"
+      eyebrow="Chapter 02 — The Legendary Block 🚫"
+      title="THE LEGENDARY BLOCK"
       subtitle="11th Class"
       tone="dark"
     >
-      <div ref={ref} className="space-y-4 rounded-3xl border border-destiny/30 bg-plum/50 p-6">
-        {stage >= 1 && (
-          <div className="animate-fade-up">
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">{config.him}</p>
-            <p className="font-serif text-2xl">“I like you.”</p>
+      <div ref={ref} className="space-y-5">
+        {stage === 0 && (
+          <div className="space-y-4 rounded-3xl border border-destiny/30 bg-plum/50 p-6">
+            <p className="font-serif text-xl">What did Avni do when Piyush said…</p>
+            <p className="font-serif text-3xl text-destiny text-center">"I LIKE YOU."</p>
+            <div className="space-y-3 pt-2">
+              {quizOptions.map((opt, i) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => answerQuiz(i)}
+                  className={`tap min-h-12 w-full rounded-2xl border border-destiny/35 bg-ink/50 px-5 py-3 text-left text-sm transition-colors hover:bg-destiny/15 ${
+                    wrongAnswer === i ? "animate-shake border-destiny" : ""
+                  }`}
+                >
+                  <span className="mr-3 text-destiny">{String.fromCharCode(65 + i)}.</span>
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
+
+        {stage >= 1 && stage < 5 && (
+          <div className="animate-fade-up rounded-3xl border border-destiny/40 bg-destiny/15 p-5 text-center">
+            <p className="font-serif text-2xl text-blush">CORRECT. 😂</p>
+            <p className="mt-2 text-sm opacity-80">Apparently you remember this part.</p>
+          </div>
+        )}
+
         {stage >= 2 && (
-          <div className="animate-fade-up">
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">{config.her}</p>
-            <p className="font-serif text-2xl tracking-[0.3em]">…</p>
+          <div className="space-y-4 rounded-3xl border border-destiny/30 bg-plum/50 p-6">
+            <div className="animate-fade-up">
+              <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">{config.him}</p>
+              <p className="font-serif text-2xl">"I like you."</p>
+            </div>
+            {stage >= 3 && (
+              <div className="animate-fade-up">
+                <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">{config.her}</p>
+                <p className="font-serif text-2xl tracking-[0.3em]">…</p>
+              </div>
+            )}
+            {stage >= 4 && (
+              <div className="animate-scale-in rounded-2xl border border-destiny/50 bg-destiny/15 p-5 text-center">
+                <p className="font-serif text-3xl text-blush">BLOCKED 🚫</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.3em] opacity-70">connection lost</p>
+              </div>
+            )}
           </div>
         )}
-        {stage >= 3 && (
-          <div className="animate-scale-in rounded-2xl border border-destiny/50 bg-destiny/15 p-5 text-center">
-            <p className="font-serif text-3xl text-blush">BLOCKED 🚫</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.3em] opacity-70">connection lost</p>
+
+        {stage >= 5 && (
+          <div className="animate-fade-up space-y-5">
+            <p className="font-serif text-2xl text-destiny">
+              And thus began one of the greatest plot twists in the history of {config.him} & {config.her}.
+            </p>
+            <p className="text-base opacity-80">
+              {config.him} had finally confessed. {config.her} had other plans.
+            </p>
+            <Line delay={0}>But somehow… instead of disappearing from each other's lives…</Line>
+            <p className="font-serif text-2xl">You became BEST FRIENDS.</p>
+            {!done ? (
+              <DestinyButton full onClick={onUnlock}>
+                Best friends unlocked ❤️
+              </DestinyButton>
+            ) : (
+              <p className="text-sm text-destiny">✓ Best friends unlocked</p>
+            )}
           </div>
         )}
       </div>
-
-      {stage >= 4 && (
-        <div className="animate-fade-up space-y-5">
-          <p className="font-serif text-3xl text-destiny">THE FIRST GREAT PLOT TWIST.</p>
-          <p className="text-base opacity-80">
-            {config.him} had finally confessed. {config.her} had other plans.
-          </p>
-          <Line delay={0}>And somehow… instead of disappearing from each other's lives…</Line>
-          <p className="font-serif text-2xl">You became BEST FRIENDS.</p>
-          {!done ? (
-            <DestinyButton full onClick={onUnlock}>
-              Best friends unlocked ❤️
-            </DestinyButton>
-          ) : (
-            <p className="text-sm text-destiny">✓ Best friends unlocked</p>
-          )}
-          <p className="text-sm italic opacity-70">
-            “Apparently, getting rejected wasn't enough to get rid of me.”
-          </p>
-        </div>
-      )}
     </Chapter>
   );
 }
@@ -256,20 +304,23 @@ export function ChapterThree({ done, onUnlock }: { done: boolean; onUnlock: () =
 /* CHAPTER 4 — ROUND TWO                                               */
 /* ================================================================== */
 export function ChapterFour({ done, onUnlock }: { done: boolean; onUnlock: () => void }) {
-  const [phase, setPhase] = useState<"idle" | "loading" | "yes">(done ? "yes" : "idle");
+  const [phase, setPhase] = useState<"idle" | "loading" | "yes" | "married">(done ? "married" : "idle");
 
   const confess = () => {
     setPhase("loading");
     window.setTimeout(() => {
       setPhase("yes");
-      onUnlock();
+      window.setTimeout(() => {
+        setPhase("married");
+        onUnlock();
+      }, 2000);
     }, 2200);
   };
 
   return (
     <Chapter
       id="ch4"
-      eyebrow="Chapter 04 — The Second Confession"
+      eyebrow="Chapter 03 — Round Two"
       title="Round Two"
       tone="dark"
     >
@@ -278,7 +329,7 @@ export function ChapterFour({ done, onUnlock }: { done: boolean; onUnlock: () =>
         {config.him} apparently looked at the history of this relationship and thought…
       </Line>
       <Line delay={240} className="text-destiny">
-        “Let's try this one more time.” 😂
+        "Let's try this one more time." 😂
       </Line>
 
       {phase === "idle" && (
@@ -302,11 +353,27 @@ export function ChapterFour({ done, onUnlock }: { done: boolean; onUnlock: () =>
         <div className="animate-scale-in space-y-5 rounded-3xl border border-destiny/50 bg-destiny/10 p-8 text-center">
           <p className="font-serif text-4xl text-blush">SHE SAID YES.</p>
           <p className="font-serif text-2xl text-destiny">FINALLY.</p>
+        </div>
+      )}
+
+      {phase === "married" && (
+        <div className="animate-fade-up space-y-5">
+          <p className="font-serif text-3xl text-blush">SHE SAID YES.</p>
+          <p className="font-serif text-2xl text-destiny">FINALLY.</p>
           <p className="text-sm opacity-80">
             After all those years… all those twists… and one legendary BLOCK…
           </p>
           <p className="font-serif text-2xl">We finally became US.</p>
-          <p className="text-lg tracking-[0.2em] text-gold">{config.togetherFor}</p>
+          <p className="text-sm opacity-75">
+            We spent {config.togetherFor}… and then… we got married. 💍
+          </p>
+          {!done ? (
+            <DestinyButton full onClick={() => onUnlock()}>
+              Continue ❤️
+            </DestinyButton>
+          ) : (
+            <p className="text-sm text-destiny">✓ Chapter unlocked</p>
+          )}
         </div>
       )}
     </Chapter>
@@ -336,7 +403,7 @@ export function AvniTest({ done, onPass }: { done: boolean; onPass: () => void }
       window.setTimeout(() => {
         setFeedback(null);
         setIndex((n) => n + 1);
-      }, 1600);
+      }, 1800);
     } else {
       setWrong(i);
       window.setTimeout(() => setWrong(null), 600);
@@ -388,15 +455,61 @@ export function AvniTest({ done, onPass }: { done: boolean; onPass: () => void }
 }
 
 /* ================================================================== */
+/* WEDDING CHAPTER                                                     */
+/* ================================================================== */
+export function WeddingChapter({ done, onUnlock }: { done: boolean; onUnlock: () => void }) {
+  return (
+    <Chapter
+      id="wedding"
+      eyebrow="Chapter 04"
+      title="THE DAY WE BECAME HUSBAND & WIFE 💍"
+      tone="dark"
+    >
+      <Line>After knowing you since school…</Line>
+      <Line delay={80}>After all the twists…</Line>
+      <Line delay={160}>After the crush…</Line>
+      <Line delay={200}>The block…</Line>
+      <Line delay={240}>Best friendship…</Line>
+      <Line delay={280}>Another confession…</Line>
+      <Line delay={320}>YES…</Line>
+      <Line delay={360}>{config.togetherFor}…</Line>
+      <Line delay={400}>And finally…</Line>
+      <Reveal delay={440}>
+        <p className="font-serif text-3xl text-blush">WE GOT MARRIED.</p>
+      </Reveal>
+      <Reveal delay={200}>
+        <PhotoFrame photo={config.photos.wedding} />
+      </Reveal>
+      <Reveal>
+        <p className="pt-2 text-center font-serif text-2xl tracking-[0.15em] text-gold">
+          {config.marriedFor}
+        </p>
+      </Reveal>
+      <Line delay={100}>But our story didn't stop there.</Line>
+      <Line delay={150}>It was only beginning a new chapter.</Line>
+      {!done ? (
+        <Reveal>
+          <DestinyButton full onClick={onUnlock}>
+            Continue ❤️
+          </DestinyButton>
+        </Reveal>
+      ) : (
+        <p className="text-sm text-destiny">✓ Chapter unlocked</p>
+      )}
+    </Chapter>
+  );
+}
+
+/* ================================================================== */
 /* CHAPTER 5 — OUR ADVENTURES                                          */
 /* ================================================================== */
 const memories = [
   {
-    tag: "Memory 01 — Austria ❄️",
+    tag: "Memory 01 — Your First Snowfall ❄️",
     title: "Your First Snowfall",
     body: [
       "Watching you experience snowfall in Austria for the first time…",
-      "…is one of those memories I know I'll carry forever.",
+      "…is one of those memories I'll carry forever.",
     ],
     photo: "austria" as const,
   },
@@ -410,19 +523,19 @@ const memories = [
     photo: "flight" as const,
   },
   {
-    tag: "Memory 03 — Our Wedding 💍",
-    title: "And Then We Got Married.",
+    tag: "Memory 03 — Our Marriage 💍",
+    title: "One of the biggest days of our lives.",
     body: [
       "After knowing you since school… after all the twists… after everything…",
       "I finally got to call you my wife.",
     ],
-    photo: "wedding" as const,
+    photo: "marriage2" as const,
   },
 ];
 
 export function ChapterFive({ done, onUnlock }: { done: boolean; onUnlock: () => void }) {
   return (
-    <Chapter id="ch5" eyebrow="Chapter 05 — Us" title="Our Adventures">
+    <Chapter id="ch5" eyebrow="Chapter 05 — Our Adventures ❤️" title="OUR ADVENTURES">
       {memories.map((m, i) => (
         <Reveal key={m.title} delay={i * 80}>
           <article className="space-y-4 rounded-3xl border border-destiny/25 bg-plum/35 p-5">
@@ -434,24 +547,20 @@ export function ChapterFive({ done, onUnlock }: { done: boolean; onUnlock: () =>
                 {b}
               </p>
             ))}
-            {m.photo === "wedding" && (
-              <p className="pt-2 text-center font-serif text-2xl tracking-[0.15em] text-gold">
-                {config.marriedFor}
-              </p>
-            )}
           </article>
         </Reveal>
       ))}
 
       <Reveal>
         <div className="flex flex-col items-center gap-4 pt-4 text-center">
-          <p className="font-serif text-xl">Still think this was a straight line?</p>
+          <p className="font-serif text-xl">{config.marriedForShort}</p>
+          <p className="font-serif text-xl">And still choosing each other every day.</p>
           <RedCircle size={90} />
           <p className="font-serif text-2xl text-destiny">Of course not.</p>
           <p className="text-sm opacity-75">We were always going in circles.</p>
           {!done ? (
             <DestinyButton full onClick={onUnlock}>
-              Follow the circle 🔴
+              Continue 🔴
             </DestinyButton>
           ) : (
             <p className="text-sm text-destiny">✓ Chapter unlocked</p>
@@ -463,126 +572,30 @@ export function ChapterFive({ done, onUnlock }: { done: boolean; onUnlock: () =>
 }
 
 /* ================================================================== */
-/* RED CIRCLE PUZZLE                                                   */
-/* ================================================================== */
-const puzzleColors = [
-  "border-blush/30 bg-blush/10",
-  "border-gold/40 bg-gold/10",
-  "border-cream/25 bg-cream/5",
-  "border-plum bg-plum/60",
-  "border-blush/20 bg-transparent",
-  "border-gold/25 bg-transparent",
-  "border-cream/15 bg-cream/5",
-  "border-blush/30 bg-plum/40",
-  "border-gold/30 bg-plum/30",
-  "border-cream/20 bg-transparent",
-];
-
-const timeline = [
-  "5th CLASS",
-  "CRUSH",
-  "11th CLASS",
-  "BLOCKED",
-  "BEST FRIENDS",
-  "SECOND CONFESSION",
-  "YES ❤️",
-  "2.5 YEARS",
-  "MARRIAGE 💍",
-];
-
-export function CirclePuzzle({ done, onSolve }: { done: boolean; onSolve: () => void }) {
-  const [solved, setSolved] = useState(done);
-  const [missIndex, setMissIndex] = useState<number | null>(null);
-  const correctSlot = 6; // position of the real red circle in the grid
-
-  const miss = (i: number) => {
-    setMissIndex(i);
-    window.setTimeout(() => setMissIndex(null), 900);
-  };
-
-  return (
-    <Chapter id="puzzle" eyebrow="The puzzle" title="THE CIRCLE OF DESTINY 🔴" tone="dark">
-      {!solved ? (
-        <>
-          <Line delay={0}>Not every circle belongs to our story.</Line>
-          <p className="text-sm opacity-70">Find the one that brought us here.</p>
-          <div className="grid grid-cols-3 gap-4 pt-4 sm:grid-cols-4">
-            {Array.from({ length: 11 }).map((_, i) => {
-              const isCorrect = i === correctSlot;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={isCorrect ? "A glowing red circle" : "A circle"}
-                  onClick={() => {
-                    if (isCorrect) {
-                      setSolved(true);
-                      onSolve();
-                    } else miss(i);
-                  }}
-                  className={`tap aspect-square rounded-full border ${
-                    isCorrect
-                      ? "border-destiny bg-destiny/25 shadow-destiny animate-destiny-pulse"
-                      : puzzleColors[i % puzzleColors.length]
-                  } ${missIndex === i ? "animate-shake" : ""}`}
-                />
-              );
-            })}
-          </div>
-          {missIndex !== null && (
-            <p className="animate-fade-up text-center text-sm text-blush">
-              ❌ Nope. That circle has no idea what it's doing here.
-            </p>
-          )}
-        </>
-      ) : (
-        <div className="animate-scale-in rounded-full border border-destiny/60 bg-destiny/10 px-6 py-12 text-center shadow-destiny">
-          <div className="space-y-1">
-            {timeline.map((t, i) => (
-              <div key={t}>
-                <p
-                  className="animate-fade-up font-serif text-lg tracking-[0.15em]"
-                  style={{ animationDelay: `${i * 120}ms` }}
-                >
-                  {t}
-                </p>
-                {i < timeline.length - 1 && <p className="text-xs text-destiny">↓</p>}
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 space-y-2 text-sm opacity-85">
-            <p>We never had a straight line.</p>
-            <p className="font-serif text-xl text-destiny">We had a red circle.</p>
-            <p>Somehow, no matter where life took us…</p>
-            <p>we kept finding our way back to each other.</p>
-          </div>
-        </div>
-      )}
-    </Chapter>
-  );
-}
-
-/* ================================================================== */
 /* THE AVNI REPORT                                                     */
 /* ================================================================== */
 const reportRows: [string, string][] = [
   ["Subject", "Avni"],
-  ["Personality", "Cute + Crazy"],
-  ["Mimicry level", "Dangerous"],
-  ["Joke frequency", "Uncontrolled"],
-  ["Diet commitment", "Under investigation"],
-  ["Does exactly what Piyush says not to do", "100%"],
+  ["Status", "Wife ❤️"],
+  ["Personality", "Funny • Crazy • Cute"],
+  ["Mimicry level", "Dangerously High 🎤"],
+  ["Joke frequency", "Uncontrolled 😂"],
+  ["Ultra-Cleaning Mode", "ULTRA HIGH — MAJOR 🧹"],
+  ["Ability to ignore Piyush's \"No\"", "100% 😈"],
+  ["Diet consistency", "Under investigation 🍕"],
+  ["Husband", "Piyush"],
+  ["Recommended punishment", "Unlimited hugs from husband ❤️"],
 ];
 
-export function AvniReport() {
+export function AvniReport({ done, onUnlock }: { done: boolean; onUnlock: () => void }) {
   return (
-    <Chapter id="report" eyebrow="One last laugh" title="THE OFFICIAL AVNI REPORT">
+    <Chapter id="report" eyebrow="One last laugh" title="THE OFFICIAL AVNI REPORT 😂">
       <Reveal>
         <dl className="divide-y divide-destiny/20 overflow-hidden rounded-3xl border border-destiny/30 bg-plum/40">
           {reportRows.map(([k, v]) => (
             <div key={k} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3 px-5 py-3">
               <dt className="min-w-0 text-xs uppercase tracking-[0.2em] opacity-65">{k}</dt>
-              <dd className="shrink-0 text-sm text-blush">{v}</dd>
+              <dd className="shrink-0 text-right text-sm text-blush">{v}</dd>
             </div>
           ))}
         </dl>
@@ -591,32 +604,39 @@ export function AvniReport() {
       <Reveal delay={80}>
         <div className="space-y-3 rounded-3xl border border-destiny/25 bg-ink/40 p-5">
           <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">Case file 001</p>
-          <h3 className="font-serif text-2xl">The Forbidden Button</h3>
-          <p className="text-sm opacity-85">Piyush: “Don't do that.”</p>
-          <p className="text-sm opacity-85">Avni: does exactly that.</p>
-          <p className="text-xs uppercase tracking-[0.25em] text-blush">Status: Unsolved.</p>
+          <h3 className="font-serif text-2xl">The Cleaning Incident 🧹</h3>
+          <p className="text-sm opacity-85">The maid came.</p>
+          <p className="text-sm opacity-85">The maid cleaned.</p>
+          <p className="text-sm opacity-85">The maid left.</p>
+          <p className="text-sm opacity-85">Avni looked around.</p>
+          <p className="text-sm opacity-85">Avni decided the cleaning needed another cleaning.</p>
+          <p className="text-sm opacity-85">{config.him}: "But she literally just cleaned."</p>
+          <p className="text-sm opacity-85">{config.her}: "I know."</p>
+          <p className="font-serif text-lg text-destiny">ULTRA CLEANING MODE: ACTIVATED. 😂</p>
         </div>
       </Reveal>
 
       <Reveal delay={120}>
         <div className="space-y-2 rounded-3xl border border-destiny/25 bg-ink/40 p-5">
           <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">Case file 002</p>
-          <h3 className="font-serif text-2xl">The Diet Plan</h3>
-          <p className="text-sm opacity-85">8:00 AM — “Today I am eating healthy.”</p>
-          <p className="text-sm opacity-85">7:00 PM — “Should we order something?”</p>
-          <p className="text-sm opacity-85">Piyush: “Didn't you say you're dieting?”</p>
-          <p className="text-sm opacity-85">Avni: “It's a cheat day.”</p>
-          <p className="text-sm opacity-85">Piyush: “You said that yesterday.”</p>
-          <p className="text-sm opacity-85">Avni: “Consistency is important.” 😂</p>
+          <h3 className="font-serif text-2xl">The Diet Plan 🍕</h3>
+          <p className="text-sm opacity-85">Morning Avni: "Today I'm eating healthy."</p>
+          <p className="text-sm opacity-85">Evening Avni: "Should we order something?"</p>
+          <p className="text-sm opacity-85">{config.him}: "Didn't you say you're dieting?"</p>
+          <p className="text-sm opacity-85">{config.her}: "It's a cheat day."</p>
+          <p className="text-sm opacity-85">{config.him}: "You said that yesterday."</p>
+          <p className="text-sm opacity-85">{config.her}: "Consistency is important." 😂</p>
         </div>
       </Reveal>
 
       <Reveal delay={160}>
         <div className="space-y-3 rounded-3xl border border-destiny/25 bg-ink/40 p-5">
           <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">Case file 003</p>
-          <h3 className="font-serif text-2xl">Professional Mimicry Artist</h3>
+          <h3 className="font-serif text-2xl">Professional Mimicry Artist 🎤</h3>
           <p className="font-serif text-lg">Why hire a comedian…</p>
           <p className="font-serif text-lg text-destiny">…when I married one?</p>
+          <p className="text-sm opacity-80">Mimicry Level: ULTRA</p>
+          <p className="text-sm opacity-80">Threat Level: Husband's sanity under investigation.</p>
           {/* 🎬 Optional: set photos.mimicryClip in story-config.ts to an mp4 path */}
           {config.photos.mimicryClip ? (
             <video
@@ -632,6 +652,14 @@ export function AvniReport() {
           )}
         </div>
       </Reveal>
+
+      {!done && (
+        <Reveal>
+          <DestinyButton full onClick={onUnlock}>
+            Continue to the challenge 🧹
+          </DestinyButton>
+        </Reveal>
+      )}
     </Chapter>
   );
 }
