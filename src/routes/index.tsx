@@ -150,12 +150,12 @@ function Story() {
 
           {has("ch5") && <ChapterFive done={has("puzzle")} onUnlock={() => unlock("puzzle")} />}
 
-          {has("puzzle") && <CirclePuzzle done={has("letter")} onSolve={() => unlock("letter")} />}
+          {has("puzzle") && <CirclePuzzle done={has("inside")} onSolve={() => unlock("inside")} />}
 
-          {has("letter") && <AvniReport />}
+          {has("inside") && <AvniReport />}
 
           {/* clue chain: your private inside joke guards the letter section */}
-          {has("letter") && !has("final") && (
+          {has("inside") && !has("letter") && (
             <section className="bg-ink px-5 py-14 sm:px-8">
               <div className="mx-auto w-full max-w-md">
                 <p className="mb-5 text-center text-[0.65rem] uppercase tracking-[0.4em] text-destiny">
@@ -163,7 +163,7 @@ function Story() {
                 </p>
                 <Passcode
                   gate={config.gates.inside}
-                  onSolved={() => unlock("final")}
+                  onSolved={() => unlock("letter")}
                   cta="Verify 🔐"
                   successTitle="IDENTITY CONFIRMED."
                   successNote="Only one person on earth could answer that."
@@ -172,11 +172,11 @@ function Story() {
             </section>
           )}
 
-          {has("final") && (
+          {has("letter") && (
             <>
-              <LoveLetter done={has("final")} onOpen={() => unlock("final")} />
-              <FinalLevel done={false} onReveal={() => unlock("final")} />
-              <FinalAnimation />
+              <LoveLetter done={has("final")} onOpen={() => undefined} />
+              <FinalLevel done={has("final")} onReveal={() => unlock("final")} />
+              {has("final") && <FinalAnimation />}
             </>
           )}
 

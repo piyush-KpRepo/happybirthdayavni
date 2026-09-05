@@ -9,6 +9,7 @@ export const STEPS = [
   "quiz", // avni test passed
   "ch5", // memories seen
   "puzzle", // red circle found
+  "inside", // private inside-joke passcode
   "letter", // love letter opened
   "final", // final photo revealed
 ] as const;
