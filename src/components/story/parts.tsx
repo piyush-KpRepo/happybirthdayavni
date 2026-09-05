@@ -135,7 +135,9 @@ export function ChapterTwo({ done, onUnlock }: { done: boolean; onUnlock: () => 
   useEffect(() => {
     if (started || !ref.current) return;
     const io = new IntersectionObserver(
-      ([e]) => {
+      (entries) => {
+        const e = entries[0];
+        if (!e) return;
         if (e.isIntersecting) setStarted(true);
       },
       { threshold: 0.3 },
