@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { config } from "@/data/story-config";
-import { useStoryProgress } from "@/hooks/useStoryProgress";
+import { useStoryProgress, type Step } from "@/hooks/useStoryProgress";
 import { DestinyButton, Passcode, RedCircle, Reveal } from "@/components/story/primitives";
 import {
   AvniReport,
@@ -48,14 +48,14 @@ const rail = [
   { key: "final", label: "❤️" },
 ] as const;
 
-function ProgressRail({ has }: { has: (s: never) => boolean }) {
+function ProgressRail({ has }: { has: (s: Step) => boolean }) {
   return (
     <nav
       aria-label="Chapter progress"
       className="sticky top-0 z-30 flex justify-center gap-2 bg-ink/85 px-3 py-2 backdrop-blur"
     >
       {rail.map((r) => {
-        const on = has(r.key as never);
+        const on = has(r.key as Step);
         return (
           <a
             key={r.key}
@@ -110,7 +110,7 @@ function Story() {
   return (
     <main className="min-h-screen bg-background">
       <MusicButton />
-      <ProgressRail has={has as (s: never) => boolean} />
+      <ProgressRail has={has} />
 
       <h1 className="sr-only">The Red Circle of Destiny — an interactive love story for Avni</h1>
 
@@ -174,8 +174,10 @@ function Story() {
 
           {has("letter") && (
             <>
-              <LoveLetter done={has("final")} onOpen={() => undefined} />
-              <FinalLevel done={has("final")} onReveal={() => unlock("final")} />
+              <LoveLetter done={has("opened")} onOpen={() => unlock("opened")} />
+              {has("opened") && (
+                <FinalLevel done={has("final")} onReveal={() => unlock("final")} />
+              )}
               {has("final") && <FinalAnimation />}
             </>
           )}
