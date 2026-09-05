@@ -251,7 +251,7 @@ export function MusicButton() {
         type="button"
         onClick={toggle}
         aria-label={playing ? "Pause soundtrack" : config.music.label}
-        className="tap fixed top-3 right-3 z-40 flex min-h-10 items-center gap-2 rounded-full border border-destiny/50 bg-ink/80 px-4 py-2 text-[0.6rem] uppercase tracking-[0.2em] text-blush backdrop-blur"
+        className="tap fixed right-3 bottom-4 z-40 flex min-h-10 items-center gap-2 rounded-full border border-destiny/50 bg-ink/80 px-4 py-2 text-[0.6rem] uppercase tracking-[0.2em] text-blush backdrop-blur"
       >
         🎵 <span>{failed ? "add a song" : playing ? "pause" : "our soundtrack"}</span>
       </button>

@@ -26,8 +26,8 @@ export function TopSecret({ onEnter }: { onEnter: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink px-6 py-16 text-center">
-      <RedCircle size={96} className="text-2xl">
-        🔴
+      <RedCircle size={96}>
+        <span className="block h-4 w-4 rounded-full bg-destiny shadow-destiny" />
       </RedCircle>
       <h1 className={`mt-8 font-serif text-4xl tracking-[0.2em] text-cream ${show(1)}`}>
         TOP SECRET
