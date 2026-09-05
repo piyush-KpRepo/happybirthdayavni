@@ -322,6 +322,10 @@ export function AvniTest({ done, onPass }: { done: boolean; onPass: () => void }
   const [wrong, setWrong] = useState<number | null>(null);
 
   const complete = index >= config.quiz.length;
+
+  useEffect(() => {
+    if (complete) onPass();
+  }, [complete, onPass]);
   const q = complete ? null : config.quiz[index];
 
   const answer = (i: number) => {
@@ -331,11 +335,7 @@ export function AvniTest({ done, onPass }: { done: boolean; onPass: () => void }
       setFeedback(q.after);
       window.setTimeout(() => {
         setFeedback(null);
-        setIndex((n) => {
-          const next = n + 1;
-          if (next >= config.quiz.length) onPass();
-          return next;
-        });
+        setIndex((n) => n + 1);
       }, 1600);
     } else {
       setWrong(i);
