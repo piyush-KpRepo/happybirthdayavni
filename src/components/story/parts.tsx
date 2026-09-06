@@ -268,7 +268,7 @@ export function ChapterThree({ done, onUnlock }: { done: boolean; onUnlock: () =
       <Line>The girl who blocked me…</Line>
       <Line delay={120}>…became one of my closest people.</Line>
       <Reveal delay={150}>
-        <PhotoFrame photo={config.photos.friends} className="aspect-[4/3]" />
+        <PhotoFrame photo={config.photos.friends} />
       </Reveal>
       <Line delay={100}>You went to college. Life moved forward.</Line>
       <Line delay={150}>But apparently destiny had its own plans.</Line>
@@ -512,6 +512,7 @@ const memories = [
       "…is one of those memories I'll carry forever.",
     ],
     photo: "austria" as const,
+    frameClass: "aspect-[4/3]",
   },
   {
     tag: "Memory 02 — First International Flight ✈️",
@@ -541,7 +542,10 @@ export function ChapterFive({ done, onUnlock }: { done: boolean; onUnlock: () =>
           <article className="space-y-4 rounded-3xl border border-destiny/25 bg-plum/35 p-5">
             <p className="text-[0.6rem] uppercase tracking-[0.3em] text-destiny">{m.tag}</p>
             <h3 className="font-serif text-2xl">{m.title}</h3>
-            <PhotoFrame photo={config.photos[m.photo]} />
+            <PhotoFrame
+              photo={config.photos[m.photo]}
+              className={"frameClass" in m ? m.frameClass : undefined}
+            />
             {m.body.map((b) => (
               <p key={b} className="font-serif text-lg leading-relaxed opacity-90">
                 {b}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { matches } from "@/data/story-config";
 import type { Photo } from "@/data/story-config";
+import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
 /* Reveal on scroll                                                    */
@@ -200,7 +201,11 @@ export function PhotoFrame({
   const shapeCls = shape === "circle" ? "rounded-full aspect-square" : "rounded-3xl aspect-[4/5]";
   return (
     <div
-      className={`group relative w-full overflow-hidden border border-destiny/40 bg-plum/40 shadow-destiny ${shapeCls} ${className}`}
+      className={cn(
+        "group relative w-full overflow-hidden border border-destiny/40 bg-plum/40 shadow-destiny",
+        shapeCls,
+        className,
+      )}
     >
       {photo.src ? (
         <img

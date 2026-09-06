@@ -201,17 +201,6 @@ function Story() {
                 Restart the story 🔁
               </DestinyButton>
             </Reveal>
-            {/* --------------------------------------------------------
-                EDITING NOTE (for Piyush only)
-                Everything personal lives in: src/data/story-config.ts
-                • photos  → put files in /public/photos and set the paths
-                • music   → /public/audio/soundtrack.mp3
-                • passcodes, clues, quiz, love letter → same file
-               -------------------------------------------------------- */}
-            <p className="mx-auto max-w-sm text-[0.6rem] leading-relaxed text-cream/25">
-              Editing note: change photos, passwords, clues and the letter in
-              src/data/story-config.ts — photos go in /public/photos, song in /public/audio.
-            </p>
           </footer>
         </>
       )}

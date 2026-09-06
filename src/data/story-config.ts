@@ -63,13 +63,13 @@ export const config = {
 
   /* --- 📸 PHOTOS ---------------------------------------------------- */
   photos: {
-    school: { src: null, label: "ADD SCHOOL PHOTO", alt: "School days" } as Photo,
-    friends: { src: null, label: "ADD BEST FRIENDS PHOTO", alt: "Best friends" } as Photo,
-    austria: { src: null, label: "ADD AUSTRIA PHOTO", alt: "First snowfall in Austria" } as Photo,
-    flight: { src: null, label: "ADD FLIGHT PHOTO", alt: "First international flight" } as Photo,
-    wedding: { src: null, label: "ADD WEDDING PHOTO", alt: "Our wedding" } as Photo,
-    marriage2: { src: null, label: "ADD ANOTHER WEDDING PHOTO", alt: "Our marriage" } as Photo,
-    final: { src: null, label: "ADD OUR FAVORITE PHOTO HERE", alt: "Us" } as Photo,
+    school: { src: "/photos/school.png", label: "ADD SCHOOL PHOTO", alt: "School days" } as Photo,
+    friends: { src: "/photos/friends.png", label: "ADD BEST FRIENDS PHOTO", alt: "Best friends" } as Photo,
+    austria: { src: "/photos/austria.png", label: "ADD AUSTRIA PHOTO", alt: "First snowfall in Austria" } as Photo,
+    flight: { src: "/photos/flight.png", label: "ADD FLIGHT PHOTO", alt: "First international flight" } as Photo,
+    wedding: { src: "/photos/wedding-2.png", label: "ADD WEDDING PHOTO", alt: "Our wedding" } as Photo,
+    marriage2: { src: "/photos/wedding-1.png", label: "ADD ANOTHER WEDDING PHOTO", alt: "Our marriage" } as Photo,
+    final: { src: "/photos/final.png", label: "ADD OUR FAVORITE PHOTO HERE", alt: "Us" } as Photo,
     /** optional funny clip — set to an mp4 in /public/photos or leave null */
     mimicryClip: null as string | null,
   },
