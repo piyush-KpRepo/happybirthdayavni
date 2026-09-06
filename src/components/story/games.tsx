@@ -390,7 +390,7 @@ const mazeLayout = [
   [1, 0, 1, 0, 1, 0, 1, 0, 1],
   [1, 0, 1, 0, 0, 0, 1, 0, 1],
   [1, 0, 1, 1, 1, 1, 1, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
@@ -409,11 +409,27 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
   const [player, setPlayer] = useState({ row: 1, col: 1 });
   const [visited, setVisited] = useState<Set<string>>(new Set(["1,1"]));
   const arenaRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef(player);
+  const solvedRef = useRef(solved);
+  playerRef.current = player;
+  solvedRef.current = solved;
 
-  const start = () => {
-    setSolved(false);
-    setPlayer({ row: 1, col: 1 });
-    setVisited(new Set(["1,1"]));
+  const move = (dr: number, dc: number) => {
+    if (solvedRef.current) return;
+    const { row, col } = playerRef.current;
+    const nr = row + dr;
+    const nc = col + dc;
+    if (nr < 0 || nr >= mazeLayout.length || nc < 0 || nc >= mazeLayout[0].length) return;
+    const goal = mazeMilestones.find((m) => m.isGoal);
+    const isGoal = Boolean(goal && nr === goal.row && nc === goal.col);
+    if (mazeLayout[nr][nc] === 1 && !isGoal) return;
+    setPlayer({ row: nr, col: nc });
+    setVisited((prev) => new Set(prev).add(`${nr},${nc}`));
+
+    if (isGoal) {
+      setSolved(true);
+      onSolve();
+    }
   };
 
   // Touch/drag navigation
@@ -426,25 +442,22 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
 
     const handleStart = (e: TouchEvent) => {
       const t = e.touches[0];
+      if (!t) return;
       touchStart = { x: t.clientX, y: t.clientY };
     };
 
     const handleEnd = (e: TouchEvent) => {
       if (!touchStart) return;
       const t = e.changedTouches[0];
+      if (!t) return;
       const dx = t.clientX - touchStart.x;
       const dy = t.clientY - touchStart.y;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
       if (Math.max(absX, absY) < 20) return;
 
-      let dr = 0, dc = 0;
-      if (absX > absY) {
-        dc = dx > 0 ? 1 : -1;
-      } else {
-        dr = dy > 0 ? 1 : -1;
-      }
-      move(dr, dc);
+      if (absX > absY) move(0, dx > 0 ? 1 : -1);
+      else move(dy > 0 ? 1 : -1, 0);
       touchStart = null;
     };
 
@@ -454,14 +467,14 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
       arena.removeEventListener("touchstart", handleStart);
       arena.removeEventListener("touchend", handleEnd);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solved, player]);
+  }, [solved]);
 
   // Keyboard navigation
   useEffect(() => {
     if (solved) return;
     const handleKey = (e: KeyboardEvent) => {
-      let dr = 0, dc = 0;
+      let dr = 0,
+        dc = 0;
       if (e.key === "ArrowUp") dr = -1;
       else if (e.key === "ArrowDown") dr = 1;
       else if (e.key === "ArrowLeft") dc = -1;
@@ -472,25 +485,7 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solved, player]);
-
-  const move = (dr: number, dc: number) => {
-    if (solved) return;
-    const nr = player.row + dr;
-    const nc = player.col + dc;
-    if (nr < 0 || nr >= mazeLayout.length || nc < 0 || nc >= mazeLayout[0].length) return;
-    if (mazeLayout[nr][nc] === 1) return;
-    setPlayer({ row: nr, col: nc });
-    setVisited((prev) => new Set(prev).add(`${nr},${nc}`));
-
-    // Check goal
-    const goal = mazeMilestones.find((m) => m.isGoal);
-    if (goal && nr === goal.row && nc === goal.col) {
-      setSolved(true);
-      onSolve();
-    }
-  };
+  }, [solved]);
 
   if (solved) {
     return (
@@ -501,6 +496,7 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
           </RedCircle>
           <p className="font-serif text-3xl text-blush">YOU FOUND ME. ❤️</p>
           <p className="text-sm opacity-80">Just like you always do.</p>
+          <p className="text-sm opacity-70">One last secret is waiting below…</p>
         </div>
       </Chapter>
     );
@@ -551,11 +547,22 @@ export function MazeGame({ done, onSolve }: { done: boolean; onSolve: () => void
         ))}
       </div>
 
-      <div className="flex justify-center gap-2 sm:hidden">
-        <DestinyButton variant="ghost" onClick={() => move(0, -1)}>←</DestinyButton>
-        <DestinyButton variant="ghost" onClick={() => move(-1, 0)}>↑</DestinyButton>
-        <DestinyButton variant="ghost" onClick={() => move(1, 0)}>↓</DestinyButton>
-        <DestinyButton variant="ghost" onClick={() => move(0, 1)}>→</DestinyButton>
+      <div className="flex flex-col items-center gap-2">
+        <DestinyButton variant="ghost" onClick={() => move(-1, 0)}>
+          ↑
+        </DestinyButton>
+        <div className="flex gap-2">
+          <DestinyButton variant="ghost" onClick={() => move(0, -1)}>
+            ←
+          </DestinyButton>
+          <DestinyButton variant="ghost" onClick={() => move(1, 0)}>
+            ↓
+          </DestinyButton>
+          <DestinyButton variant="ghost" onClick={() => move(0, 1)}>
+            →
+          </DestinyButton>
+        </div>
+        <p className="text-[0.6rem] uppercase tracking-[0.2em] text-destiny/70">or use arrow keys</p>
       </div>
     </Chapter>
   );
